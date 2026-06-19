@@ -137,6 +137,8 @@ input::placeholder{color:#a0aec0}
   .riepilogo-grid{grid-template-columns:1fr}
   .coord-actions{width:100%}
   .coord-actions button{flex:1}
+  .part-row{grid-template-columns:1fr!important}
+  .part-row button{justify-self:stretch}
 }
 
 @media print {
@@ -681,9 +683,10 @@ document.addEventListener('DOMContentLoaded', () => {
     partWrap.innerHTML='';
     state.partecipanti.forEach((p,i)=>{
       const row = document.createElement('div');
-      row.className='grid';
-      row.style.gridTemplateColumns='1fr 1fr 1fr 1fr auto';
-      row.style.gap='16px';
+      row.className='part-row';
+      row.style.display='grid';
+      row.style.gridTemplateColumns='repeat(auto-fit, minmax(160px, 1fr))';
+      row.style.gap='12px';
       row.style.alignItems='end';
       row.style.marginBottom='12px';
       
@@ -730,6 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
       delBtn.className='ghost';
       delBtn.title='Rimuovi partecipante';
       delBtn.style.padding='10px 12px';
+      delBtn.style.justifySelf='start';
       delBtn.onclick=()=>{ state.partecipanti.splice(i,1); renderPart(); save(); renderStatus(); };
       
       row.appendChild(labelNome);
@@ -1939,21 +1943,30 @@ document.addEventListener('DOMContentLoaded', () => {
     addSectionHeader('', 'Firme');
     yPos += 2;
     checkPageBreak(50);
-    const firmaWidth = contentWidth - 10;
 
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
     pdf.text('Coordinatore per la Sicurezza in fase di Esecuzione', margin, yPos);
     if(state.firmaDL) {
-      try { pdf.addImage(state.firmaDL, 'PNG', margin, yPos + 3, firmaWidth, 20); }
-      catch(e) { pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]); pdf.line(margin, yPos + 15, margin + firmaWidth, yPos + 15); }
+      try {
+        const imgProps = pdf.getImageProperties(state.firmaDL);
+        const maxW = contentWidth - 10;
+        const maxH = 25;
+        const ratio = imgProps.width / imgProps.height;
+        let w = maxW, h = maxH;
+        if (ratio > maxW / maxH) { w = maxW; h = maxW / ratio; }
+        else { h = maxH; w = maxH * ratio; }
+        pdf.addImage(state.firmaDL, 'PNG', margin, yPos + 3, w, h);
+        yPos += h + 5;
+      }
+      catch(e) { pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]); pdf.line(margin, yPos + 15, margin + contentWidth - 10, yPos + 15); yPos += 22; }
     } else {
       pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
-      pdf.line(margin, yPos + 15, margin + firmaWidth, yPos + 15);
+      pdf.line(margin, yPos + 15, margin + contentWidth - 10, yPos + 15);
+      yPos += 22;
     }
-    yPos += 30;
-    
+
     // Firme aggiuntive
     if(state.firmeAggiuntive && state.firmeAggiuntive.length > 0) {
       state.firmeAggiuntive.forEach((f) => {
@@ -1962,13 +1975,23 @@ document.addEventListener('DOMContentLoaded', () => {
           pdf.setFont('helvetica', 'bold');
           pdf.text(f.label, margin, yPos);
           if(f.firma) {
-            try { pdf.addImage(f.firma, 'PNG', margin, yPos + 3, 70, 20); }
-            catch(e) { pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]); pdf.line(margin, yPos + 15, margin + 70, yPos + 15); }
+            try {
+              const imgProps = pdf.getImageProperties(f.firma);
+              const maxW = 70;
+              const maxH = 25;
+              const ratio = imgProps.width / imgProps.height;
+              let w = maxW, h = maxH;
+              if (ratio > maxW / maxH) { w = maxW; h = maxW / ratio; }
+              else { h = maxH; w = maxH * ratio; }
+              pdf.addImage(f.firma, 'PNG', margin, yPos + 3, w, h);
+              yPos += h + 5;
+            }
+            catch(e) { pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]); pdf.line(margin, yPos + 15, margin + 70, yPos + 15); yPos += 22; }
           } else {
             pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
             pdf.line(margin, yPos + 15, margin + 70, yPos + 15);
+            yPos += 22;
           }
-          yPos += 30;
         }
       });
     }
