@@ -37,6 +37,8 @@ Single-file static webapp (`index.html`) for digital construction-site inspectio
   - `jspdf.umd.min.js`
   - `jspdf.plugin.autotable.min.js`
   Changing or removing these script tags will break PDF export.
+- CSS custom properties (`:root` variables) control the brand green palette; keep them in sync with RGB values used in `exportPDF()`.
+- Header actions are collapsible on mobile via `#headerToggle` / `#headerActions.open`.
 
 ## Runtime behavior agents should know
 
@@ -44,9 +46,12 @@ Single-file static webapp (`index.html`) for digital construction-site inspectio
 - Photos are compressed to max 1200×1200px, JPEG quality ~0.8, and stored as base64 data URLs.
 - JSON export strips images to keep the file small for AI import; PDF export includes images.
 - Adding dynamic sections or changing `id` attributes often requires wiring into `refreshAll()` or exposing handlers via `window.handle*` functions because several buttons use inline `onclick` attributes.
+- Removed fields (`rup`, `firmaIMP`) are cleaned from loaded state to avoid stale data.
+- Weather prefill uses the Open-Meteo API (`api.open-meteo.com`) with no API key; it requires coordinates or device geolocation.
 
 ## Conventions
 
 - UI language is Italian; preserve Italian labels and date formats (`DD/MM/YYYY`, `it-IT`) when editing output/export.
 - The app is mobile-first; keep CSS `@media (max-width:768px)` responsive rules intact.
 - Signature canvases rely on pixel-ratio scaling via `devicePixelRatio`; avoid changing canvas sizing logic unless necessary.
+- PDF signature images must preserve aspect ratio (use `pdf.getImageProperties()`) rather than drawing with fixed width/height.

@@ -25,6 +25,9 @@ header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,0.95);backdr
 .header-content{max-width:1200px;margin:0 auto;display:flex;gap:16px;align-items:center;justify-content:space-between;padding:16px 24px;flex-wrap:wrap}
 header h1{font-size:24px;font-weight:700;margin:0;color:var(--brand-dark)}
 .header-subtitle{font-size:13px;color:var(--text-light);margin-top:2px}
+.header-title{display:flex;gap:12px;align-items:center;justify-content:space-between;flex:1}
+.header-toggle{display:none;background:transparent;color:var(--brand);border:2px solid var(--brand);padding:6px 12px;border-radius:8px;font-size:18px;cursor:pointer;box-shadow:none}
+.header-toggle:hover{background:var(--brand-light)}
 
 /* Buttons */
 .actions{display:flex;gap:10px;flex-wrap:wrap}
@@ -128,8 +131,12 @@ input::placeholder{color:#a0aec0}
 
 /* Responsive */
 @media (max-width:768px){
-  .header-content{flex-direction:column;align-items:stretch}
-  .actions{width:100%}
+  .header-content{flex-direction:column;align-items:stretch;padding:12px 16px}
+  .header-title{width:100%}
+  .header-toggle{display:inline-block}
+  .actions{display:none;width:100%;flex-direction:column;align-items:stretch;margin-top:12px}
+  .actions.open{display:flex}
+  .actions button,.actions label.file{width:100%;text-align:center}
   .g2,.g3,.g4{grid-template-columns:1fr}
   .chips{grid-template-columns:repeat(2,minmax(0,1fr))}
   .allegati-grid{grid-template-columns:1fr}
@@ -137,6 +144,8 @@ input::placeholder{color:#a0aec0}
   .riepilogo-grid{grid-template-columns:1fr}
   .coord-actions{width:100%}
   .coord-actions button{flex:1}
+  .part-row{grid-template-columns:1fr!important}
+  .part-row button{justify-self:stretch}
 }
 
 @media print {
@@ -150,11 +159,12 @@ input::placeholder{color:#a0aec0}
 <body>
 <header>
   <div class="header-content">
-    <div>
+    <div class="header-title">
       <h1>📋 Verbale di Sopralluogo <span class="doc-badge">v2.0</span></h1>
       <div class="header-subtitle">ai sensi dell'art. 92 D.LGS 81/2008</div>
+      <button id="headerToggle" class="header-toggle" type="button" aria-label="Mostra azioni">☰</button>
     </div>
-    <div class="actions">
+    <div class="actions" id="headerActions">
       <button id="btnExportPDF">📄 Esporta PDF</button>
       <button id="btnPrint" class="secondary">🖨️ Stampa</button>
       <button id="btnExportJSON" class="ghost" title="Esporta dati senza immagini (ottimizzato per AI)">💾 Salva JSON</button>
@@ -681,9 +691,10 @@ document.addEventListener('DOMContentLoaded', () => {
     partWrap.innerHTML='';
     state.partecipanti.forEach((p,i)=>{
       const row = document.createElement('div');
-      row.className='grid';
-      row.style.gridTemplateColumns='1fr 1fr 1fr 1fr auto';
-      row.style.gap='16px';
+      row.className='part-row';
+      row.style.display='grid';
+      row.style.gridTemplateColumns='repeat(auto-fit, minmax(160px, 1fr))';
+      row.style.gap='12px';
       row.style.alignItems='end';
       row.style.marginBottom='12px';
       
@@ -730,6 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
       delBtn.className='ghost';
       delBtn.title='Rimuovi partecipante';
       delBtn.style.padding='10px 12px';
+      delBtn.style.justifySelf='start';
       delBtn.onclick=()=>{ state.partecipanti.splice(i,1); renderPart(); save(); renderStatus(); };
       
       row.appendChild(labelNome);
@@ -1939,21 +1951,30 @@ document.addEventListener('DOMContentLoaded', () => {
     addSectionHeader('', 'Firme');
     yPos += 2;
     checkPageBreak(50);
-    const firmaWidth = contentWidth - 10;
 
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
     pdf.text('Coordinatore per la Sicurezza in fase di Esecuzione', margin, yPos);
     if(state.firmaDL) {
-      try { pdf.addImage(state.firmaDL, 'PNG', margin, yPos + 3, firmaWidth, 20); }
-      catch(e) { pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]); pdf.line(margin, yPos + 15, margin + firmaWidth, yPos + 15); }
+      try {
+        const imgProps = pdf.getImageProperties(state.firmaDL);
+        const maxW = contentWidth - 10;
+        const maxH = 25;
+        const ratio = imgProps.width / imgProps.height;
+        let w = maxW, h = maxH;
+        if (ratio > maxW / maxH) { w = maxW; h = maxW / ratio; }
+        else { h = maxH; w = maxH * ratio; }
+        pdf.addImage(state.firmaDL, 'PNG', margin, yPos + 3, w, h);
+        yPos += h + 5;
+      }
+      catch(e) { pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]); pdf.line(margin, yPos + 15, margin + contentWidth - 10, yPos + 15); yPos += 22; }
     } else {
       pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
-      pdf.line(margin, yPos + 15, margin + firmaWidth, yPos + 15);
+      pdf.line(margin, yPos + 15, margin + contentWidth - 10, yPos + 15);
+      yPos += 22;
     }
-    yPos += 30;
-    
+
     // Firme aggiuntive
     if(state.firmeAggiuntive && state.firmeAggiuntive.length > 0) {
       state.firmeAggiuntive.forEach((f) => {
@@ -1962,13 +1983,23 @@ document.addEventListener('DOMContentLoaded', () => {
           pdf.setFont('helvetica', 'bold');
           pdf.text(f.label, margin, yPos);
           if(f.firma) {
-            try { pdf.addImage(f.firma, 'PNG', margin, yPos + 3, 70, 20); }
-            catch(e) { pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]); pdf.line(margin, yPos + 15, margin + 70, yPos + 15); }
+            try {
+              const imgProps = pdf.getImageProperties(f.firma);
+              const maxW = 70;
+              const maxH = 25;
+              const ratio = imgProps.width / imgProps.height;
+              let w = maxW, h = maxH;
+              if (ratio > maxW / maxH) { w = maxW; h = maxW / ratio; }
+              else { h = maxH; w = maxH * ratio; }
+              pdf.addImage(f.firma, 'PNG', margin, yPos + 3, w, h);
+              yPos += h + 5;
+            }
+            catch(e) { pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]); pdf.line(margin, yPos + 15, margin + 70, yPos + 15); yPos += 22; }
           } else {
             pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
             pdf.line(margin, yPos + 15, margin + 70, yPos + 15);
+            yPos += 22;
           }
-          yPos += 30;
         }
       });
     }
@@ -2004,6 +2035,25 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('📄 Click Esporta PDF (bottom)');
     exportPDF();
   });
+
+  // Header collassabile su mobile
+  const headerActions = $('headerActions');
+  const headerToggle = $('headerToggle');
+  function updateHeaderToggle() {
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) {
+      headerActions.classList.remove('open');
+      headerToggle.textContent = '☰';
+      headerToggle.setAttribute('aria-label', 'Mostra azioni');
+    }
+  }
+  headerToggle.addEventListener('click', () => {
+    const open = headerActions.classList.toggle('open');
+    headerToggle.textContent = open ? '✕' : '☰';
+    headerToggle.setAttribute('aria-label', open ? 'Nascondi azioni' : 'Mostra azioni');
+  });
+  window.addEventListener('resize', updateHeaderToggle);
+  updateHeaderToggle();
   
   // Firme aggiuntive
   const firmeAggWrap = $('firmeAggiuntive');
