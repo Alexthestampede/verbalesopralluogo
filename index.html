@@ -5,112 +5,126 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Verbale di Sopralluogo v2.0</title>
 <style>
+:root{
+  --brand:#2e7d32;
+  --brand-dark:#1b5e20;
+  --brand-light:#e8f5e9;
+  --brand-pale:#c8e6c9;
+  --brand-soft:rgba(46,125,50,0.1);
+  --text:#1a202c;
+  --text-light:#4a5568;
+  --border:#e2e8f0;
+  --danger:#ef4444;
+  --success:#22c55e
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:'Inter',-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:#f0f4f8;color:#1a202c;min-height:100vh;padding-bottom:60px}
+body{margin:0;font-family:'Inter',-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:#f0f4f8;color:var(--text);min-height:100vh;padding-bottom:60px}
 
-/* Header moderno con gradiente */
+/* Header */
 header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.08);box-shadow:0 4px 20px rgba(0,0,0,0.08)}
 .header-content{max-width:1200px;margin:0 auto;display:flex;gap:16px;align-items:center;justify-content:space-between;padding:16px 24px;flex-wrap:wrap}
-header h1{font-size:24px;font-weight:700;margin:0;background:linear-gradient(135deg, #17a2b8 0%, #8bc34a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.header-subtitle{font-size:13px;color:#4a5568;margin-top:2px}
+header h1{font-size:24px;font-weight:700;margin:0;color:var(--brand-dark)}
+.header-subtitle{font-size:13px;color:var(--text-light);margin-top:2px}
 
-/* Buttons moderni */
+/* Buttons */
 .actions{display:flex;gap:10px;flex-wrap:wrap}
-button{border:none;background:linear-gradient(135deg, #17a2b8 0%, #8bc34a 100%);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(23,162,184,0.3)}
-button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(23,162,184,0.4)}
-button.secondary{background:#fff;color:#17a2b8;border:2px solid #17a2b8;box-shadow:none}
-button.secondary:hover{background:#f7fafc;box-shadow:0 2px 8px rgba(23,162,184,0.2)}
-button.ghost{background:transparent;color:#4a5568;border:1px solid #e2e8f0;box-shadow:none}
+button{border:none;background:var(--brand);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(46,125,50,0.3)}
+button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(46,125,50,0.4)}
+button.secondary{background:#fff;color:var(--brand);border:2px solid var(--brand);box-shadow:none}
+button.secondary:hover{background:var(--brand-light);box-shadow:0 2px 8px rgba(46,125,50,0.2)}
+button.ghost{background:transparent;color:var(--text-light);border:1px solid var(--border);box-shadow:none}
 button.ghost:hover{background:#f7fafc}
-label.file{border:2px dashed #cbd5e0;border-radius:10px;padding:9px 16px;background:#fff;color:#4a5568;cursor:pointer;font-weight:600;transition:all 0.3s ease}
-label.file:hover{border-color:#17a2b8;color:#17a2b8;background:#f7fafc}
+label.file{border:2px dashed #cbd5e0;border-radius:10px;padding:9px 16px;background:#fff;color:var(--text-light);cursor:pointer;font-weight:600;transition:all 0.3s ease}
+label.file:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-light)}
 label.file input{display:none}
 
-/* Container principale */
+/* Container */
 .container{max-width:1200px;margin:24px auto;padding:0 24px}
 
-/* Cards moderne con ombre */
+/* Cards */
 .card{background:#fff;border-radius:20px;padding:24px;margin-bottom:20px;box-shadow:0 8px 30px rgba(0,0,0,0.12);transition:all 0.3s ease}
 .card:hover{box-shadow:0 12px 40px rgba(0,0,0,0.15);transform:translateY(-2px)}
 
-/* Sezioni con header migliorati */
+/* Sezioni */
 .section{margin-top:20px}
-.section h3{background:linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);border:1px solid #e2e8f0;border-radius:12px;padding:12px 16px;margin:0 0 16px;font-size:16px;font-weight:700;color:#2d3748;display:flex;align-items:center;gap:10px}
-.section h3::before{content:'';width:4px;height:20px;background:linear-gradient(135deg, #17a2b8 0%, #8bc34a 100%);border-radius:2px}
+.section h3{background:var(--brand-light);border:1px solid var(--brand-pale);border-radius:12px;padding:12px 16px;margin:0 0 16px;font-size:16px;font-weight:700;color:var(--brand-dark);display:flex;align-items:center;gap:10px}
+.section h3::before{content:'';width:4px;height:20px;background:var(--brand);border-radius:2px}
 
-/* Badge per documento */
-.doc-badge{display:inline-block;background:linear-gradient(135deg, #17a2b8 0%, #8bc34a 100%);color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-left:8px}
+/* Badge */
+.doc-badge{display:inline-block;background:var(--brand);color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-left:8px}
 
-/* Grid migliorato */
+/* Grid */
 .grid{display:grid;gap:16px}
 .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
 
-/* Form elements moderni */
-label{font-size:13px;font-weight:600;display:flex;flex-direction:column;gap:8px;color:#4a5568}
-input,select,textarea{border:2px solid #e2e8f0;border-radius:10px;padding:12px 14px;font-size:14px;background:#fff;transition:all 0.3s ease;font-family:inherit}
-input:focus,select:focus,textarea:focus{outline:none;border-color:#17a2b8;box-shadow:0 0 0 3px rgba(23,162,184,0.1)}
+/* Form elements */
+label{font-size:13px;font-weight:600;display:flex;flex-direction:column;gap:8px;color:var(--text-light)}
+input,select,textarea{border:2px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;background:#fff;transition:all 0.3s ease;font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
 input::placeholder{color:#a0aec0}
 
-/* Coordinate specifiche con icona */
+/* Coordinate specifiche */
 .coordinate-group{position:relative}
 .coordinate-group::before{content:'📍';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
 .coordinate-group input{padding-left:38px}
+.coord-actions{display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap}
 
-/* Meteo card speciale */
-.meteo-card{background:linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);border:2px solid #7dd3fc;padding:20px;border-radius:16px;margin-bottom:16px}
-.meteo-header{font-size:15px;font-weight:700;color:#0c4a6e;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+/* Meteo card */
+.meteo-card{background:var(--brand-light);border:2px solid var(--brand-pale);padding:20px;border-radius:16px;margin-bottom:16px}
+.meteo-header{font-size:15px;font-weight:700;color:var(--brand-dark);margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .meteo-header::before{content:'🌤️';font-size:20px}
+.meteo-actions{display:flex;gap:10px;align-items:center;margin-bottom:16px}
 
 /* Inline elements */
 .inline{display:inline-flex;align-items:center;gap:8px;margin-right:12px;cursor:pointer;user-select:none}
 .inline input[type="radio"],.inline input[type="checkbox"]{width:18px;height:18px;cursor:pointer}
 .inline-row{display:flex;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap}
 .field{margin:8px 0}
-.label{font-size:13px;font-weight:600;margin-bottom:8px;color:#4a5568}
+.label{font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text-light)}
 
-/* Chips moderni */
+/* Chips */
 .chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.chips label{flex-direction:row;gap:10px;align-items:center;background:#f7fafc;padding:10px 14px;border-radius:10px;border:2px solid #e2e8f0;transition:all 0.3s ease;cursor:pointer}
+.chips label{flex-direction:row;gap:10px;align-items:center;background:#f7fafc;padding:10px 14px;border-radius:10px;border:2px solid var(--border);transition:all 0.3s ease;cursor:pointer}
 .chips label:hover{background:#edf2f7;border-color:#cbd5e0}
-.chips input:checked + label,.chips label:has(input:checked){background:linear-gradient(135deg, rgba(23,162,184,0.1) 0%, rgba(139,195,74,0.1) 100%);border-color:#17a2b8;color:#17a2b8}
+.chips input:checked + label,.chips label:has(input:checked){background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}
 
 /* Allegati grid */
 .allegati-grid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:10px}
-.allegati-grid label{flex-direction:row;gap:10px;align-items:center;font-size:14px;background:#f7fafc;padding:10px 14px;border-radius:10px;border:2px solid #e2e8f0;cursor:pointer;transition:all 0.3s ease}
+.allegati-grid label{flex-direction:row;gap:10px;align-items:center;font-size:14px;background:#f7fafc;padding:10px 14px;border-radius:10px;border:2px solid var(--border);cursor:pointer;transition:all 0.3s ease}
 .allegati-grid label:hover{background:#edf2f7}
-.allegati-grid label:has(input:checked){background:linear-gradient(135deg, rgba(23,162,184,0.1) 0%, rgba(139,195,74,0.1) 100%);border-color:#17a2b8}
+.allegati-grid label:has(input:checked){background:var(--brand-soft);border-color:var(--brand)}
 .allegati-extra{display:flex;align-items:center;gap:12px;margin-top:12px}
 
-/* Tables moderne */
-.table{border:2px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#fff}
+/* Tables */
+.table{border:2px solid var(--border);border-radius:12px;overflow:hidden;background:#fff}
 .table .row{display:grid;gap:8px;padding:12px;border-top:1px solid #f1f5f9;transition:background 0.2s ease}
 .table .row:hover:not(.head){background:#f8fafc}
-.table .head{background:linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);font-weight:700;color:#2d3748;border-top:none}
-.table .row input,.table .row select,.table .row textarea{width:100%;border:1px solid #e2e8f0}
+.table .head{background:var(--brand-light);font-weight:700;color:var(--brand-dark);border-top:none}
+.table .row input,.table .row select,.table .row textarea{width:100%;border:1px solid var(--border)}
 .table .row textarea{height:60px;resize:vertical}
 
-/* Riepilogo cards */
+/* Riepilogo */
 .riepilogo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
-.riepilogo-item{background:linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);padding:20px;border-radius:12px;text-align:center;border:2px solid #e2e8f0}
-.riepilogo-value{font-size:32px;font-weight:700;background:linear-gradient(135deg, #17a2b8 0%, #8bc34a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.riepilogo-label{font-size:12px;color:#4a5568;margin-top:4px;font-weight:600}
+.riepilogo-item{background:var(--brand-light);padding:20px;border-radius:12px;text-align:center;border:2px solid var(--brand-pale)}
+.riepilogo-value{font-size:32px;font-weight:700;color:var(--brand)}
+.riepilogo-label{font-size:12px;color:var(--text-light);margin-top:4px;font-weight:600}
 
 /* Status badge */
 .status-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:20px;font-size:13px;font-weight:700;margin-top:12px}
-.status-badge.valid{background:#d1fae5;color:#065f46;border:2px solid #6ee7b7}
+.status-badge.valid{background:#d1fae5;color:var(--brand-dark);border:2px solid var(--brand-pale)}
 .status-badge.invalid{background:#fee2e2;color:#991b1b;border:2px solid #fca5a5}
 
-/* Firma pads moderni */
-.sigpad{border:2px solid #e2e8f0;border-radius:12px;background:#fafafa;height:180px;touch-action:none;cursor:crosshair;transition:border-color 0.3s ease}
+/* Firma pads */
+.sigpad{border:2px solid var(--border);border-radius:12px;background:#fafafa;height:180px;touch-action:none;cursor:crosshair;transition:border-color 0.3s ease}
 .sigpad:hover{border-color:#cbd5e0}
 .sigtools{display:flex;gap:10px;margin-top:10px}
 
 /* Footer sticky */
-.sticky{position:sticky;bottom:0;background:rgba(255,255,255,0.98);backdrop-filter:blur(20px);border-top:2px solid rgba(23,162,184,0.2);padding:16px 24px;display:flex;justify-content:center;box-shadow:0 -4px 20px rgba(0,0,0,0.08)}
+.sticky{position:sticky;bottom:0;background:rgba(255,255,255,0.98);backdrop-filter:blur(20px);border-top:2px solid var(--brand-pale);padding:16px 24px;display:flex;justify-content:center;box-shadow:0 -4px 20px rgba(0,0,0,0.08)}
 
-.small{font-size:12px;color:#4a5568}
+.small{font-size:12px;color:var(--text-light)}
 
 /* Responsive */
 @media (max-width:768px){
@@ -121,11 +135,13 @@ input::placeholder{color:#a0aec0}
   .allegati-grid{grid-template-columns:1fr}
   .table .row{grid-template-columns:1fr!important;gap:6px}
   .riepilogo-grid{grid-template-columns:1fr}
+  .coord-actions{width:100%}
+  .coord-actions button{flex:1}
 }
 
-@media print { 
+@media print {
   body{background:#fff;padding:0}
-  header, .sticky { display:none !important } 
+  header, .sticky { display:none !important }
   .section h3{background:#eee;page-break-after:avoid}
   .card{box-shadow:none;page-break-inside:avoid}
 }
@@ -136,7 +152,7 @@ input::placeholder{color:#a0aec0}
   <div class="header-content">
     <div>
       <h1>📋 Verbale di Sopralluogo <span class="doc-badge">v2.0</span></h1>
-      <div class="header-subtitle">Sistema di gestione verbali cantiere</div>
+      <div class="header-subtitle">ai sensi dell'art. 92 D.LGS 81/2008</div>
     </div>
     <div class="actions">
       <button id="btnExportPDF">📄 Esporta PDF</button>
@@ -154,7 +170,7 @@ input::placeholder{color:#a0aec0}
     <div class="grid g3">
       <label>Data<input id="dataDoc" type="date"></label>
       <label>Autore<input id="autore" placeholder="Nome cognome"></label>
-      <label>Codice Progetto<input id="progettoShort" placeholder="PRJ-001"></label>
+      <label>Numero Verbale<input id="progettoShort" placeholder="PRJ-001"></label>
     </div>
   </section>
 
@@ -172,7 +188,6 @@ input::placeholder{color:#a0aec0}
     <div class="grid g2" style="margin-top:16px">
       <label>Committente<input id="committente" placeholder="Ragione sociale"></label>
       <label>Impresa<input id="impresa" placeholder="Impresa esecutrice"></label>
-      <label>RUP<input id="rup" placeholder="Responsabile Unico Procedimento"></label>
     </div>
     <div class="grid g3" style="margin-top:16px">
       <label>Data Sopralluogo *<input id="dataVerbale" type="date"></label>
@@ -184,6 +199,9 @@ input::placeholder{color:#a0aec0}
       <label class="coordinate-group">Coordinate Cantiere (Lat, Long)
         <input id="coordinate" placeholder="es. 45.4384, 10.9916" pattern="^-?\d+\.?\d*,\s*-?\d+\.?\d*$">
       </label>
+      <div class="coord-actions">
+        <button id="btnGeoloc" type="button" class="secondary">📍 Usa posizione attuale</button>
+      </div>
       <div class="small" style="margin-top:6px">💡 Formato: latitudine, longitudine (es. 45.4384, 10.9916)</div>
     </div>
   </section>
@@ -191,6 +209,9 @@ input::placeholder{color:#a0aec0}
   <section class="section">
     <h3>🌤️ Condizioni Meteo e Ambientali</h3>
     <div class="meteo-card">
+      <div class="meteo-actions">
+        <button id="btnMeteo" type="button" class="secondary">🌤️ Riempi meteo da posizione</button>
+      </div>
       <div class="meteo-header">Dati Meteorologici</div>
       <div class="grid g3">
         <label>Condizioni Generali
@@ -342,17 +363,10 @@ input::placeholder{color:#a0aec0}
     <h3>✍️ Firme</h3>
     <div class="grid g2">
       <div>
-        <label>Firma Direttore Lavori</label>
+        <label>Firma Coordinatore per la Sicurezza in fase di Esecuzione</label>
         <canvas id="sigDL" class="sigpad"></canvas>
         <div class="sigtools">
           <button id="clearDL" class="secondary">🗑️ Cancella</button>
-        </div>
-      </div>
-      <div>
-        <label>Firma Impresa</label>
-        <canvas id="sigIMP" class="sigpad"></canvas>
-        <div class="sigtools">
-          <button id="clearIMP" class="secondary">🗑️ Cancella</button>
         </div>
       </div>
     </div>
@@ -539,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const defaultState = {
     dataDoc:todayISO(), autore:'', progettoShort:'',
-    progetto:'', codiceCommessa:'', comune:'', indirizzo:'', provincia:'', committente:'', impresa:'', rup:'',
+    progetto:'', codiceCommessa:'', comune:'', indirizzo:'', provincia:'', committente:'', impresa:'',
     dataVerbale:'', oraInizio:'', oraFine:'', coordinate:'',
     meteo:'', temperatura:'', visibilita:'', noteMeteo:'',
     stato:'',
@@ -562,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nonConformita:[], raci:[], foto:[],
     allegati:{}, allegatiAltro:'',
     noteFinali:'',
-    firmaDL:null, firmaIMP:null,
+    firmaDL:null,
     firmeAggiuntive:[]
   };
   
@@ -571,7 +585,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const saved = localStorage.getItem(STORAGE);
     if(saved) Object.assign(state, JSON.parse(saved));
   }catch(e){console.log('No saved state');}
-  
+
+  // Pulizia campi storici rimossi
+  if ('rup' in state) { delete state.rup; }
+  if ('firmaIMP' in state) { delete state.firmaIMP; }
+  save();
+
   function save(){ localStorage.setItem(STORAGE, JSON.stringify(state)); }
   
   // Funzione per aggiornare tutte le visualizzazioni dopo il load
@@ -640,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // Bind simple fields
-  const simpleFields = ['dataDoc','autore','progettoShort','progetto','codiceCommessa','comune','indirizzo','provincia','committente','impresa','rup','dataVerbale','oraInizio','oraFine','coordinate','meteo','temperatura','visibilita','noteMeteo','statoLavori','aspettiPositivi','criticita','noteFinali'];
+  const simpleFields = ['dataDoc','autore','progettoShort','progetto','codiceCommessa','comune','indirizzo','provincia','committente','impresa','dataVerbale','oraInizio','oraFine','coordinate','meteo','temperatura','visibilita','noteMeteo','statoLavori','aspettiPositivi','criticita','noteFinali'];
   simpleFields.forEach(f=>{
     const el=$(f);
     if(el){
@@ -1280,10 +1299,6 @@ document.addEventListener('DOMContentLoaded', () => {
       stateClean.hasFirmaDL = true;
       delete stateClean.firmaDL;
     }
-    if (stateClean.firmaIMP) {
-      stateClean.hasFirmaIMP = true;
-      delete stateClean.firmaIMP;
-    }
     if (stateClean.firmeAggiuntive) {
       stateClean.numFirmeAggiuntive = stateClean.firmeAggiuntive.length;
       delete stateClean.firmeAggiuntive;
@@ -1338,6 +1353,147 @@ document.addEventListener('DOMContentLoaded', () => {
       location.reload();
     }
   });
+
+  // Geolocalizzazione coordinate
+  function parseCoords(str) {
+    const m = (str || '').trim().match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
+    return m ? { lat: parseFloat(m[1]), lng: parseFloat(m[2]) } : null;
+  }
+
+  function formatCoords(lat, lng) {
+    return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  }
+
+  function getCurrentPosition() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocalizzazione non supportata dal browser.'));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        err => {
+          const msgs = {
+            1: 'Permesso negato. Abilita la geolocalizzazione nelle impostazioni del browser.',
+            2: 'Posizione non disponibile.',
+            3: 'Timeout nella lettura della posizione.'
+          };
+          reject(new Error(msgs[err.code] || 'Errore nella geolocalizzazione.'));
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    });
+  }
+
+  $('btnGeoloc').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const btn = $('btnGeoloc');
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ Lettura...';
+    btn.disabled = true;
+    try {
+      const coords = await getCurrentPosition();
+      const text = formatCoords(coords.lat, coords.lng);
+      $('coordinate').value = text;
+      state.coordinate = text;
+      save();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }
+  });
+
+  // Riempimento meteo da Open-Meteo
+  const WEATHER_CODE_MAP = {
+    0: '☀️ Sereno',
+    1: '⛅ Parzialmente nuvoloso',
+    2: '⛅ Parzialmente nuvoloso',
+    3: '☁️ Nuvoloso',
+    45: '🌫️ Nebbia',
+    48: '🌫️ Nebbia',
+    51: '🌧️ Pioggia leggera',
+    53: '🌧️ Pioggia leggera',
+    55: '🌧️ Pioggia leggera',
+    56: '🌧️ Pioggia leggera',
+    57: '🌧️ Pioggia leggera',
+    61: '🌧️ Pioggia leggera',
+    63: '🌧️ Pioggia leggera',
+    65: '⛈️ Pioggia forte',
+    66: '⛈️ Pioggia forte',
+    67: '⛈️ Pioggia forte',
+    71: '❄️ Neve',
+    73: '❄️ Neve',
+    75: '❄️ Neve',
+    77: '❄️ Neve',
+    80: '🌧️ Pioggia leggera',
+    81: '⛈️ Pioggia forte',
+    82: '⛈️ Pioggia forte',
+    85: '❄️ Neve',
+    86: '❄️ Neve',
+    95: '⚡ Temporale',
+    96: '⚡ Temporale',
+    99: '⚡ Temporale'
+  };
+
+  function visibilityBand(meters) {
+    if (meters == null) return '';
+    if (meters >= 10000) return 'Ottima (>10km)';
+    if (meters >= 5000) return 'Buona (5-10km)';
+    if (meters >= 2000) return 'Moderata (2-5km)';
+    return 'Scarsa (<2km)';
+  }
+
+  async function fetchOpenMeteo(lat, lng) {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weather_code,visibility&timezone=auto`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Risposta meteo non valida.');
+    const data = await res.json();
+    if (!data || !data.current) throw new Error('Dati meteo non disponibili.');
+    return data.current;
+  }
+
+  $('btnMeteo').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const btn = $('btnMeteo');
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ Lettura...';
+    btn.disabled = true;
+    try {
+      let coords = parseCoords(state.coordinate);
+      if (!coords) {
+        try { coords = await getCurrentPosition(); }
+        catch (err) { throw new Error('Coordinate mancanti. Usa prima "📍 Usa posizione attuale" o inserisci le coordinate.'); }
+      }
+      const current = await fetchOpenMeteo(coords.lat, coords.lng);
+      if (current.temperature_2m != null) {
+        $('temperatura').value = current.temperature_2m;
+        state.temperatura = String(current.temperature_2m);
+      }
+      if (current.weather_code != null) {
+        const meteo = WEATHER_CODE_MAP[current.weather_code] || '';
+        if (meteo) {
+          $('meteo').value = meteo;
+          state.meteo = meteo;
+        }
+      }
+      if (current.visibility != null) {
+        const band = visibilityBand(current.visibility);
+        if (band) {
+          $('visibilita').value = band;
+          state.visibilita = band;
+        }
+      }
+      save();
+      alert('Dati meteorologici aggiornati.');
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }
+  });
   
   // Stampa
   $('btnPrint').addEventListener('click', (e) => {
@@ -1359,8 +1515,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageWidth = 210, margin = 20, contentWidth = pageWidth - (margin * 2);
     
     const colors = {
-      primary: [23, 162, 184],
-      primaryLight: [224, 247, 250],
+      primary: [46, 125, 50],
+      primaryLight: [232, 245, 233],
       secondary: [71, 85, 105],
       text: [15, 23, 42],
       textLight: [100, 116, 139],
@@ -1485,19 +1641,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     
-    // Header documento
-    pdf.setFillColor(colors.primary[0], colors.primary[1], colors.primary[2]);
-    pdf.rect(0, 0, pageWidth, 45, 'F');
+    // Header documento (printer-friendly, testo verde centrato)
     pdf.setFontSize(24);
     pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(255, 255, 255);
-    pdf.text('VERBALE DI SOPRALLUOGO', margin, 20);
+    pdf.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+    const title = 'VERBALE DI SOPRALLUOGO';
+    const titleWidth = pdf.getTextWidth(title);
+    pdf.text(title, (pageWidth - titleWidth) / 2, 20);
+
     pdf.setFontSize(11);
     pdf.setFont('helvetica', 'normal');
-    pdf.text(`${state.progetto || 'Progetto'} - ${state.dataVerbale || 'N/D'}`, margin, 28);
-    
-    yPos = 55;
-    addInfoBox(`Generato: ${new Date().toLocaleDateString('it-IT')} | Autore: ${state.autore || 'N/D'} | Codice: ${state.progettoShort || 'N/D'}`, [240, 249, 255]);
+    pdf.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
+    const sub = `${state.progetto || 'Progetto'} - ${state.dataVerbale || 'N/D'}`;
+    const subWidth = pdf.getTextWidth(sub);
+    pdf.text(sub, (pageWidth - subWidth) / 2, 28);
+
+    pdf.setDrawColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+    pdf.setLineWidth(1);
+    pdf.line(margin, 35, pageWidth - margin, 35);
+
+    yPos = 48;
+    addInfoBox(`Generato: ${new Date().toLocaleDateString('it-IT')} | Autore: ${state.autore || 'N/D'} | Numero Verbale: ${state.progettoShort || 'N/D'}`, [240, 249, 255]);
     yPos += 2;
     
     // 1. Intestazione
@@ -1510,10 +1674,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if(state.committente) addField('Committente', state.committente, true);
     if(state.impresa) addField('Impresa', state.impresa, true);
-    if(state.rup) addField('RUP', state.rup, true);
     if(state.dataVerbale) addField('Data Sopralluogo', state.dataVerbale, true);
     if(state.oraInizio && state.oraFine) addField('Orario', `${state.oraInizio} - ${state.oraFine}`, true);
-    if(state.coordinate) addField('Coordinate GPS', state.coordinate, true);
+    if(state.coordinate) {
+      addField('Coordinate GPS', state.coordinate, true);
+      const coordMatch = state.coordinate.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
+      if(coordMatch) {
+        const lat = coordMatch[1], lng = coordMatch[2];
+        const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+        checkPageBreak(6);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+        pdf.textWithLink('Apri in Google Maps', margin + 45, yPos - 1, { url: mapUrl });
+      }
+    }
     yPos += 3; addSeparator();
     
     // 2. Meteo
@@ -1581,7 +1756,8 @@ document.addEventListener('DOMContentLoaded', () => {
           headStyles: { fillColor: colors.primary, textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
           alternateRowStyles: { fillColor: [248, 250, 252] },
           margin: { left: margin, right: margin },
-          columnStyles: { 0: {cellWidth: 75}, 1: {cellWidth: 25, halign: 'center'}, 2: {cellWidth: 75}, 3: {cellWidth: 15, halign: 'center'} }
+          columnStyles: { 0: {cellWidth: 70}, 1: {cellWidth: 25, halign: 'center'}, 2: {cellWidth: 'auto'}, 3: {cellWidth: 15, halign: 'center'} },
+          tableWidth: 'wrap'
         });
         yPos = pdf.lastAutoTable.finalY + 8;
       }
@@ -1637,7 +1813,8 @@ document.addEventListener('DOMContentLoaded', () => {
           headStyles: { fillColor: colors.danger, textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
           alternateRowStyles: { fillColor: [254, 242, 242] },
           margin: { left: margin, right: margin },
-          columnStyles: { 0: {cellWidth: 50}, 1: {cellWidth: 20, halign: 'center'}, 2: {cellWidth: 30}, 3: {cellWidth: 50}, 4: {cellWidth: 25, halign: 'center'} }
+          columnStyles: { 0: {cellWidth: 'auto'}, 1: {cellWidth: 20, halign: 'center'}, 2: {cellWidth: 30}, 3: {cellWidth: 50}, 4: {cellWidth: 25, halign: 'center'} },
+          tableWidth: 'wrap'
         });
         yPos = pdf.lastAutoTable.finalY + 8;
       }
@@ -1660,7 +1837,8 @@ document.addEventListener('DOMContentLoaded', () => {
           styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1 },
           headStyles: { fillColor: [59, 130, 246], textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
           alternateRowStyles: { fillColor: [239, 246, 255] },
-          margin: { left: margin, right: margin }
+          margin: { left: margin, right: margin },
+          tableWidth: 'wrap'
         });
         yPos = pdf.lastAutoTable.finalY + 8;
       }
@@ -1761,27 +1939,18 @@ document.addEventListener('DOMContentLoaded', () => {
     addSectionHeader('', 'Firme');
     yPos += 2;
     checkPageBreak(50);
-    const firmaWidth = (contentWidth - 10) / 2;
-    
+    const firmaWidth = contentWidth - 10;
+
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
-    pdf.text('Direttore Lavori', margin, yPos);
+    pdf.text('Coordinatore per la Sicurezza in fase di Esecuzione', margin, yPos);
     if(state.firmaDL) {
-      try { pdf.addImage(state.firmaDL, 'PNG', margin, yPos + 3, firmaWidth - 10, 20); }
-      catch(e) { pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]); pdf.line(margin, yPos + 15, margin + firmaWidth - 10, yPos + 15); }
+      try { pdf.addImage(state.firmaDL, 'PNG', margin, yPos + 3, firmaWidth, 20); }
+      catch(e) { pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]); pdf.line(margin, yPos + 15, margin + firmaWidth, yPos + 15); }
     } else {
       pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
-      pdf.line(margin, yPos + 15, margin + firmaWidth - 10, yPos + 15);
-    }
-    
-    pdf.text('Impresa', margin + firmaWidth + 10, yPos);
-    if(state.firmaIMP) {
-      try { pdf.addImage(state.firmaIMP, 'PNG', margin + firmaWidth + 10, yPos + 3, firmaWidth - 10, 20); }
-      catch(e) { pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]); pdf.line(margin + firmaWidth + 10, yPos + 15, margin + contentWidth, yPos + 15); }
-    } else {
-      pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
-      pdf.line(margin + firmaWidth + 10, yPos + 15, margin + contentWidth, yPos + 15);
+      pdf.line(margin, yPos + 15, margin + firmaWidth, yPos + 15);
     }
     yPos += 30;
     
@@ -1988,7 +2157,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   setupSig('sigDL','clearDL','firmaDL');
-  setupSig('sigIMP','clearIMP','firmaIMP');
   
   // Ricarica tutte le visualizzazioni con i dati salvati
   // Usa setTimeout più lungo per mobile e forza rendering aree/lavorazioni
