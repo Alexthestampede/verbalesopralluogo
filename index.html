@@ -1666,8 +1666,8 @@ document.addEventListener('DOMContentLoaded', () => {
     pdf.text(title, (pageWidth - titleWidth) / 2, 20);
 
     pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
     const dlgs = "ai sensi dell'art. 92 D.LGS 81/2008";
     const dlgsWidth = pdf.getTextWidth(dlgs);
     pdf.text(dlgs, (pageWidth - dlgsWidth) / 2, 28);
