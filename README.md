@@ -4,7 +4,7 @@ Sistema completo per la gestione digitale dei verbali di sopralluogo cantiere.
 
 ## 🌐 Demo Online
 
-**URL:** https://[tuo-username].github.io/verbale-sopralluogo/
+**URL:** https://[tuo-username].github.io/verbalesopralluogo/
 
 ## ✨ Caratteristiche
 
@@ -35,8 +35,8 @@ Sistema completo per la gestione digitale dei verbali di sopralluogo cantiere.
 
 **Opzione B - Git CLI:**
 ```bash
-git clone https://github.com/[tuo-username]/verbale-sopralluogo.git
-cd verbale-sopralluogo
+git clone https://github.com/[tuo-username]/verbalesopralluogo.git
+cd verbalesopralluogo
 # Copia index.html nella cartella
 git add .
 git commit -m "Initial commit"
@@ -56,7 +56,7 @@ git push
 
 ### Passo 4: Verifica
 
-Vai su: `https://[tuo-username].github.io/verbale-sopralluogo/`
+Vai su: `https://[tuo-username].github.io/verbalesopralluogo/`
 
 ✅ Dovrebbe funzionare perfettamente su iPhone, Android, Desktop!
 
