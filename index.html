@@ -1558,96 +1558,125 @@ document.addEventListener('DOMContentLoaded', () => {
       pdf.setFontSize(size);
       pdf.setFont('helvetica', style);
       pdf.setTextColor(color[0], color[1], color[2]);
-      const lines = pdf.splitTextToSize(text, contentWidth);
-      checkPageBreak(lines.length * size * 0.4 + 2);
+      const lineHeight = size * 0.45;
+      const lines = pdf.splitTextToSize(String(text).replace(/\r\n/g, '\n'), contentWidth);
+      const blockHeight = lines.length * lineHeight + 2;
+      if (checkPageBreak(blockHeight)) {
+        // If we page-breaked, recalc lines in case contentWidth changes per page
+        pdf.setFontSize(size);
+        pdf.setFont('helvetica', style);
+        pdf.setTextColor(color[0], color[1], color[2]);
+      }
       pdf.text(lines, margin, yPos);
-      yPos += lines.length * size * 0.4 + 2;
+      yPos += blockHeight;
     }
     
     function addField(label, value, sameLine = false) {
       if(!value || value === 'N/D') return;
-      checkPageBreak(6);
+      const valueText = String(value).replace(/\r\n/g, '\n');
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(colors.secondary[0], colors.secondary[1], colors.secondary[2]);
       
       if(sameLine) {
+        const labelWidth = pdf.getTextWidth(label + ':');
+        const valueLines = pdf.splitTextToSize(valueText, contentWidth - labelWidth - 3);
+        const blockHeight = Math.max(valueLines.length * 3.8, 5);
+        checkPageBreak(blockHeight);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(colors.secondary[0], colors.secondary[1], colors.secondary[2]);
         pdf.text(label + ':', margin, yPos);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
-        pdf.text(value, margin + 45, yPos);
-        yPos += 5;
+        pdf.text(valueLines, margin + labelWidth + 2, yPos);
+        yPos += blockHeight + 2;
       } else {
+        const lines = pdf.splitTextToSize(valueText, contentWidth - 5);
+        const blockHeight = 4 + lines.length * 3.8 + 3;
+        checkPageBreak(blockHeight);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(colors.secondary[0], colors.secondary[1], colors.secondary[2]);
         pdf.text(label, margin, yPos);
         yPos += 4;
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
-        const lines = pdf.splitTextToSize(value, contentWidth - 5);
         pdf.text(lines, margin + 5, yPos);
-        yPos += lines.length * 3.5 + 3;
+        yPos += lines.length * 3.8 + 3;
       }
     }
     
     function addInfoBox(content, bgColor = colors.primaryLight) {
-      checkPageBreak(15);
+      const text = String(content).replace(/\r\n/g, ' | ');
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      const lines = pdf.splitTextToSize(text, contentWidth - 8);
+      const h = lines.length * 4 + 6;
+      checkPageBreak(h);
       pdf.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-      pdf.roundedRect(margin, yPos - 2, contentWidth, 8, 2, 2, 'F');
+      pdf.roundedRect(margin, yPos - 2, contentWidth, h, 2, 2, 'F');
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
-      pdf.text(content, margin + 3, yPos + 3);
-      yPos += 11;
+      pdf.text(lines, margin + 4, yPos + 3);
+      yPos += h + 4;
     }
     
     function addSectionHeader(number, text) {
-      checkPageBreak(12);
+      const displayText = text.toUpperCase();
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      const textWidth = pdf.getTextWidth(displayText);
+      const boxW = 10 + 6 + textWidth + 4;
+      const boxH = 10;
+      checkPageBreak(boxH + 4);
       pdf.setFillColor(colors.primary[0], colors.primary[1], colors.primary[2]);
-      pdf.roundedRect(margin, yPos, 10, 8, 1, 1, 'F');
+      pdf.roundedRect(margin, yPos, boxW, boxH, 1.5, 1.5, 'F');
       pdf.setFontSize(11);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(255, 255, 255);
-      pdf.text(number, margin + 3, yPos + 5.5);
+      if (number) {
+        pdf.text(number, margin + 3, yPos + 6.5);
+      }
       pdf.setFontSize(12);
-      pdf.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
-      pdf.text(text.toUpperCase(), margin + 13, yPos + 5.5);
-      yPos += 12;
+      pdf.setTextColor(255, 255, 255);
+      pdf.text(displayText, margin + 13, yPos + 6.5);
+      yPos += boxH + 4;
     }
     
     // Helper per aggiungere immagini mantenendo proporzioni
     function addImageWithAspectRatio(imgData, maxWidth, maxHeight) {
       try {
-        // Estrae tipo e dati dall'immagine base64
         const matches = imgData.match(/^data:image\/(\w+);base64,(.*)$/);
         if (!matches) {
           throw new Error('Invalid image data');
         }
-        
+
         const imageType = matches[1].toUpperCase();
         const format = imageType === 'JPG' ? 'JPEG' : imageType;
-        
-        // jsPDF può determinare automaticamente le dimensioni, ma forziamo un aspect ratio ragionevole
-        // Proviamo ad aggiungere l'immagine e jsPDF gestirà le dimensioni
+
         const imgProps = pdf.getImageProperties(imgData);
         const ratio = imgProps.width / imgProps.height;
-        
+
         let width = maxWidth;
         let height = maxHeight;
-        
+
         if(ratio > maxWidth / maxHeight) {
-          // Immagine più larga - limita larghezza
           width = maxWidth;
           height = maxWidth / ratio;
         } else {
-          // Immagine più alta - limita altezza  
           height = maxHeight;
           width = maxHeight * ratio;
         }
-        
+
+        checkPageBreak(height + 3);
         pdf.addImage(imgData, format, margin, yPos, width, height);
         yPos += height + 3;
         return true;
       } catch(e) {
         console.error('Errore caricamento immagine:', e);
+        checkPageBreak(6);
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'italic');
         pdf.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
@@ -1689,27 +1718,29 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 1. Intestazione
     addSectionHeader('1', 'Intestazione Cantiere');
-    if(state.progetto) addField('Progetto', state.progetto, true);
+    if(state.progetto) addField('Progetto', state.progetto);
     if(state.codiceCommessa) addField('Codice/Commessa', state.codiceCommessa, true);
     if(state.comune || state.indirizzo || state.provincia) {
       const indCompleto = [state.comune, state.indirizzo, state.provincia ? `(${state.provincia})` : ''].filter(Boolean).join(', ');
-      addField('Indirizzo completo', indCompleto, true);
+      addField('Indirizzo', indCompleto);
     }
     if(state.committente) addField('Committente', state.committente, true);
     if(state.impresa) addField('Impresa', state.impresa, true);
     if(state.dataVerbale) addField('Data Sopralluogo', state.dataVerbale, true);
     if(state.oraInizio && state.oraFine) addField('Orario', `${state.oraInizio} - ${state.oraFine}`, true);
     if(state.coordinate) {
-      addField('Coordinate GPS', state.coordinate, true);
       const coordMatch = state.coordinate.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
       if(coordMatch) {
         const lat = coordMatch[1], lng = coordMatch[2];
         const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+        addField('Coordinate GPS', state.coordinate, true);
         checkPageBreak(6);
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
         pdf.textWithLink('Apri in Google Maps', margin + 45, yPos - 1, { url: mapUrl });
+      } else {
+        addField('Coordinate GPS', state.coordinate, true);
       }
     }
     yPos += 3; addSeparator();
@@ -1793,24 +1824,28 @@ document.addEventListener('DOMContentLoaded', () => {
         yPos += 3;
         
         checkConFoto.forEach((c, idx) => {
-          checkPageBreak(50);
+          const caption = `${idx + 1}. ${c.voce}`;
+          const noteText = c.note ? `Nota: ${c.note}` : '';
+          const noteLines = noteText ? pdf.splitTextToSize(noteText, contentWidth) : [];
+          const noteH = noteLines.length * 3.2 + 3;
+          const imgH = 45 + 3;
+          const blockH = 5 + imgH + noteH + 4;
+          checkPageBreak(blockH);
           
           pdf.setFontSize(9);
           pdf.setFont('helvetica', 'bold');
           pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
-          pdf.text(`${idx + 1}. ${c.voce}`, margin, yPos);
+          pdf.text(caption, margin, yPos);
           yPos += 5;
           
-          checkPageBreak(50);
           addImageWithAspectRatio(c.immagine, 60, 45);
           
           if(c.note) {
             pdf.setFontSize(8);
             pdf.setFont('helvetica', 'normal');
             pdf.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
-            const noteLines = pdf.splitTextToSize(`Nota: ${c.note}`, contentWidth);
             pdf.text(noteLines, margin, yPos);
-            yPos += noteLines.length * 3 + 3;
+            yPos += noteH;
           }
           
           yPos += 2;
@@ -1876,7 +1911,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if(fotoConImmagine.length > 0) {
         // Mostra le foto con immagini
         fotoConImmagine.forEach((f, idx) => {
-          checkPageBreak(80); // Spazio per immagine + testo
+          const noteText = f.nota ? `Nota: ${f.nota}` : '';
+          const noteLines = noteText ? pdf.splitTextToSize(noteText, contentWidth) : [];
+          const noteH = noteLines.length * 4 + (f.posizione ? 4 : 0) + 4;
+          const blockH = 6 + 63 + noteH + 3;
+          checkPageBreak(blockH);
           
           // Titolo foto
           pdf.setFontSize(10);
@@ -1886,7 +1925,6 @@ document.addEventListener('DOMContentLoaded', () => {
           yPos += 6;
           
           // Immagine con proporzioni corrette
-          checkPageBreak(70);
           addImageWithAspectRatio(f.immagine, 80, 60);
           
           // Dettagli sotto l'immagine
@@ -1898,7 +1936,6 @@ document.addEventListener('DOMContentLoaded', () => {
             yPos += 4;
           }
           if(f.nota) {
-            const noteLines = pdf.splitTextToSize(`Nota: ${f.nota}`, contentWidth);
             pdf.text(noteLines, margin, yPos);
             yPos += noteLines.length * 4 + 5;
           }
@@ -1946,15 +1983,20 @@ document.addEventListener('DOMContentLoaded', () => {
     addSectionHeader('12', 'Riepilogo Finale');
     const nc = (state.nonConformita || []).filter(x => x.descr && x.descr.trim()).length;
     const presc = (state.nonConformita || []).filter(x => x.azione && x.azione.trim()).length;
-    checkPageBreak(20);
+    const boxLineH = 6;
+    const summaryText = `Non Conformita: ${nc}    |    Prescrizioni: ${presc}`;
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'bold');
+    const summaryW = pdf.getTextWidth(summaryText) + 14;
+    const boxH = boxLineH + 8;
+    checkPageBreak(boxH + 8);
     pdf.setFillColor(colors.primaryLight[0], colors.primaryLight[1], colors.primaryLight[2]);
-    pdf.roundedRect(margin, yPos, contentWidth, 15, 2, 2, 'F');
+    pdf.roundedRect(margin, yPos, summaryW, boxH, 2, 2, 'F');
     pdf.setFontSize(11);
     pdf.setFont('helvetica', 'bold');
     pdf.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
-    pdf.text(`Non Conformita: ${nc}`, margin + 5, yPos + 6);
-    pdf.text(`Prescrizioni: ${presc}`, margin + 90, yPos + 6);
-    yPos += 20;
+    pdf.text(summaryText, margin + 7, yPos + 8);
+    yPos += boxH + 8;
     if(state.noteFinali) { addField('Note Conclusive', state.noteFinali); yPos += 3; }
     addSeparator();
     
