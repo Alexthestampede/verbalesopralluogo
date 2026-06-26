@@ -1542,12 +1542,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     function checkPageBreak(height = 10) {
-      if (yPos + height > 270) { pdf.addPage(); yPos = 20; return true; }
+      if (yPos + height > 265) { pdf.addPage(); yPos = 20; return true; }
       return false;
     }
     
     function checkHeaderPageBreak(height, minY) {
-      if (minY + height > 270) { pdf.addPage(); return true; }
+      if (minY + height > 265) { pdf.addPage(); return true; }
       return false;
     }
     
@@ -1680,13 +1680,13 @@ document.addEventListener('DOMContentLoaded', () => {
           width = maxHeight * ratio;
         }
 
-        checkPageBreak(height + 3);
+        if (yPos + height + 3 > 265) { pdf.addPage(); yPos = 20; }
         pdf.addImage(imgData, format, margin, yPos, width, height);
         yPos += height + 3;
         return true;
       } catch(e) {
         console.error('Errore caricamento immagine:', e);
-        checkPageBreak(6);
+        if (yPos + 6 > 265) { pdf.addPage(); yPos = 20; }
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'italic');
         pdf.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
@@ -1809,7 +1809,8 @@ document.addEventListener('DOMContentLoaded', () => {
         c.immagine ? 'Si' : '-'
       ]);
       if(checkData.length > 0) {
-        checkPageBreak(30);
+        const tableBottomMargin = 30;
+        if (yPos + 30 > 270) { pdf.addPage(); yPos = 20; }
         pdf.autoTable({
           startY: yPos,
           head: [['Voce', 'Esito', 'Note', 'Foto']],
@@ -1818,9 +1819,9 @@ document.addEventListener('DOMContentLoaded', () => {
           styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1, overflow: 'linebreak', valign: 'top' },
           headStyles: { fillColor: colors.primary, textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
           alternateRowStyles: { fillColor: [248, 250, 252] },
-          margin: { left: margin, right: margin, bottom: 25 },
-          columnStyles: { 0: {cellWidth: 70}, 1: {cellWidth: 22, halign: 'center'}, 2: {cellWidth: 'auto'}, 3: {cellWidth: 15, halign: 'center'} },
-          tableWidth: 'wrap',
+          margin: { left: margin, right: margin, bottom: tableBottomMargin },
+          columnStyles: { 0: {cellWidth: 'auto'}, 1: {cellWidth: 22, halign: 'center'}, 2: {cellWidth: 'auto'}, 3: {cellWidth: 15, halign: 'center'} },
+          tableWidth: 'auto',
           pageBreak: 'auto',
           rowPageBreak: 'avoid'
         });
@@ -1872,7 +1873,8 @@ document.addEventListener('DOMContentLoaded', () => {
         nc.descr, nc.gravita || '-', nc.responsabile || '-', nc.azione || '-', nc.scadenza || '-'
       ]);
       if(ncData.length > 0) {
-        checkPageBreak(30);
+        const tableBottomMargin = 30;
+        if (yPos + 30 > 270) { pdf.addPage(); yPos = 20; }
         pdf.autoTable({
           startY: yPos,
           head: [['Descrizione', 'Gravita', 'Responsabile', 'Azione Correttiva', 'Scadenza']],
@@ -1881,9 +1883,9 @@ document.addEventListener('DOMContentLoaded', () => {
           styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1, overflow: 'linebreak', valign: 'top' },
           headStyles: { fillColor: colors.danger, textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
           alternateRowStyles: { fillColor: [254, 242, 242] },
-          margin: { left: margin, right: margin, bottom: 25 },
-          columnStyles: { 0: {cellWidth: 'auto'}, 1: {cellWidth: 20, halign: 'center'}, 2: {cellWidth: 30}, 3: {cellWidth: 45}, 4: {cellWidth: 25, halign: 'center'} },
-          tableWidth: 'wrap',
+          margin: { left: margin, right: margin, bottom: tableBottomMargin },
+          columnStyles: { 0: {cellWidth: 'auto'}, 1: {cellWidth: 20, halign: 'center'}, 2: {cellWidth: 30}, 3: {cellWidth: 'auto'}, 4: {cellWidth: 25, halign: 'center'} },
+          tableWidth: 'auto',
           pageBreak: 'auto',
           rowPageBreak: 'avoid'
         });
@@ -1899,7 +1901,8 @@ document.addEventListener('DOMContentLoaded', () => {
         r.cosa, r.responsabile || '-', r.supporto || '-', r.dataLimite || '-'
       ]);
       if(raciData.length > 0) {
-        checkPageBreak(30);
+        const tableBottomMargin = 30;
+        if (yPos + 30 > 270) { pdf.addPage(); yPos = 20; }
         pdf.autoTable({
           startY: yPos,
           head: [['Attivita', 'Responsabile', 'Supporto', 'Data Limite']],
@@ -1908,8 +1911,8 @@ document.addEventListener('DOMContentLoaded', () => {
           styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1, overflow: 'linebreak', valign: 'top' },
           headStyles: { fillColor: [59, 130, 246], textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
           alternateRowStyles: { fillColor: [239, 246, 255] },
-          margin: { left: margin, right: margin, bottom: 25 },
-          tableWidth: 'wrap',
+          margin: { left: margin, right: margin, bottom: tableBottomMargin },
+          tableWidth: 'auto',
           pageBreak: 'auto',
           rowPageBreak: 'avoid'
         });
@@ -1965,7 +1968,8 @@ document.addEventListener('DOMContentLoaded', () => {
         yPos += 5;
         addText('Altre foto (solo riferimenti):', 9, 'bold', colors.secondary);
         const fotoData = fotoSenzaImmagine.map(f => [f.id, f.posizione || '-', f.nota || '-']);
-        checkPageBreak(30);
+        const tableBottomMargin = 30;
+        if (yPos + 30 > 270) { pdf.addPage(); yPos = 20; }
         pdf.autoTable({
           startY: yPos,
           head: [['Foto ID', 'Posizione', 'Descrizione']],
@@ -1974,9 +1978,9 @@ document.addEventListener('DOMContentLoaded', () => {
           styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1, overflow: 'linebreak', valign: 'top' },
           headStyles: { fillColor: colors.success, textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
           alternateRowStyles: { fillColor: [240, 253, 244] },
-          margin: { left: margin, right: margin, bottom: 25 },
+          margin: { left: margin, right: margin, bottom: tableBottomMargin },
           columnStyles: { 0: {cellWidth: 30, halign: 'center'}, 1: {cellWidth: 40}, 2: {cellWidth: 'auto'} },
-          tableWidth: 'wrap',
+          tableWidth: 'auto',
           pageBreak: 'auto',
           rowPageBreak: 'avoid'
         });
@@ -2086,12 +2090,12 @@ document.addEventListener('DOMContentLoaded', () => {
       pdf.setFontSize(8);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
-      const footerProject = pdf.splitTextToSize(state.progetto || 'Verbale di sopralluogo', contentWidth - 55)[0];
+      const footerProject = pdf.splitTextToSize(state.progetto || 'Verbale di sopralluogo', contentWidth - 60)[0];
       pdf.text(footerProject, margin, footerY);
       const pageText = `Pag. ${i} di ${pageCount}`;
       const pageTextWidth = pdf.getTextWidth(pageText);
       pdf.text(pageText, (pageWidth - pageTextWidth) / 2, footerY);
-      pdf.text(`${new Date().toLocaleDateString('it-IT')}`, pageWidth - margin - 25, footerY);
+      pdf.text(`${new Date().toLocaleDateString('it-IT')}`, pageWidth - margin - 22, footerY);
     }
     
     pdf.save(`Verbale_${(state.progettoShort||'Progetto').replaceAll(' ','-')}_${state.dataVerbale||todayISO()}.pdf`);
