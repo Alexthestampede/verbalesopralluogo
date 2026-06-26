@@ -1815,12 +1815,14 @@ document.addEventListener('DOMContentLoaded', () => {
           head: [['Voce', 'Esito', 'Note', 'Foto']],
           body: checkData,
           theme: 'striped',
-          styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1 },
+          styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1, overflow: 'linebreak', valign: 'top' },
           headStyles: { fillColor: colors.primary, textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
           alternateRowStyles: { fillColor: [248, 250, 252] },
-          margin: { left: margin, right: margin },
-          columnStyles: { 0: {cellWidth: 70}, 1: {cellWidth: 25, halign: 'center'}, 2: {cellWidth: 'auto'}, 3: {cellWidth: 15, halign: 'center'} },
-          tableWidth: 'wrap'
+          margin: { left: margin, right: margin, bottom: 25 },
+          columnStyles: { 0: {cellWidth: 70}, 1: {cellWidth: 22, halign: 'center'}, 2: {cellWidth: 'auto'}, 3: {cellWidth: 15, halign: 'center'} },
+          tableWidth: 'wrap',
+          pageBreak: 'auto',
+          rowPageBreak: 'avoid'
         });
         yPos = pdf.lastAutoTable.finalY + 8;
       }
@@ -1876,12 +1878,14 @@ document.addEventListener('DOMContentLoaded', () => {
           head: [['Descrizione', 'Gravita', 'Responsabile', 'Azione Correttiva', 'Scadenza']],
           body: ncData,
           theme: 'striped',
-          styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1 },
+          styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1, overflow: 'linebreak', valign: 'top' },
           headStyles: { fillColor: colors.danger, textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
           alternateRowStyles: { fillColor: [254, 242, 242] },
-          margin: { left: margin, right: margin },
-          columnStyles: { 0: {cellWidth: 'auto'}, 1: {cellWidth: 20, halign: 'center'}, 2: {cellWidth: 30}, 3: {cellWidth: 50}, 4: {cellWidth: 25, halign: 'center'} },
-          tableWidth: 'wrap'
+          margin: { left: margin, right: margin, bottom: 25 },
+          columnStyles: { 0: {cellWidth: 'auto'}, 1: {cellWidth: 20, halign: 'center'}, 2: {cellWidth: 30}, 3: {cellWidth: 45}, 4: {cellWidth: 25, halign: 'center'} },
+          tableWidth: 'wrap',
+          pageBreak: 'auto',
+          rowPageBreak: 'avoid'
         });
         yPos = pdf.lastAutoTable.finalY + 8;
       }
@@ -1901,11 +1905,13 @@ document.addEventListener('DOMContentLoaded', () => {
           head: [['Attivita', 'Responsabile', 'Supporto', 'Data Limite']],
           body: raciData,
           theme: 'striped',
-          styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1 },
+          styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1, overflow: 'linebreak', valign: 'top' },
           headStyles: { fillColor: [59, 130, 246], textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
           alternateRowStyles: { fillColor: [239, 246, 255] },
-          margin: { left: margin, right: margin },
-          tableWidth: 'wrap'
+          margin: { left: margin, right: margin, bottom: 25 },
+          tableWidth: 'wrap',
+          pageBreak: 'auto',
+          rowPageBreak: 'avoid'
         });
         yPos = pdf.lastAutoTable.finalY + 8;
       }
@@ -1965,11 +1971,14 @@ document.addEventListener('DOMContentLoaded', () => {
           head: [['Foto ID', 'Posizione', 'Descrizione']],
           body: fotoData,
           theme: 'striped',
-          styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1 },
+          styles: { fontSize: 8, cellPadding: 3, lineColor: colors.border, lineWidth: 0.1, overflow: 'linebreak', valign: 'top' },
           headStyles: { fillColor: colors.success, textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
           alternateRowStyles: { fillColor: [240, 253, 244] },
-          margin: { left: margin, right: margin },
-          columnStyles: { 0: {cellWidth: 30, halign: 'center'}, 1: {cellWidth: 40}, 2: {cellWidth: 100} }
+          margin: { left: margin, right: margin, bottom: 25 },
+          columnStyles: { 0: {cellWidth: 30, halign: 'center'}, 1: {cellWidth: 40}, 2: {cellWidth: 'auto'} },
+          tableWidth: 'wrap',
+          pageBreak: 'auto',
+          rowPageBreak: 'avoid'
         });
         yPos = pdf.lastAutoTable.finalY + 8;
       }
@@ -2072,14 +2081,17 @@ document.addEventListener('DOMContentLoaded', () => {
       pdf.setPage(i);
       pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
       pdf.setLineWidth(0.5);
-      pdf.line(margin, 282, pageWidth - margin, 282);
+      const footerY = 287;
+      pdf.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
       pdf.setFontSize(8);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
-      const footerProject = pdf.splitTextToSize(state.progetto || 'Verbale di sopralluogo', contentWidth - 50)[0];
-      pdf.text(footerProject, margin, 287);
-      pdf.text(`Pag. ${i} di ${pageCount}`, pageWidth / 2 - 10, 287);
-      pdf.text(`${new Date().toLocaleDateString('it-IT')}`, pageWidth - margin - 20, 287);
+      const footerProject = pdf.splitTextToSize(state.progetto || 'Verbale di sopralluogo', contentWidth - 55)[0];
+      pdf.text(footerProject, margin, footerY);
+      const pageText = `Pag. ${i} di ${pageCount}`;
+      const pageTextWidth = pdf.getTextWidth(pageText);
+      pdf.text(pageText, (pageWidth - pageTextWidth) / 2, footerY);
+      pdf.text(`${new Date().toLocaleDateString('it-IT')}`, pageWidth - margin - 25, footerY);
     }
     
     pdf.save(`Verbale_${(state.progettoShort||'Progetto').replaceAll(' ','-')}_${state.dataVerbale||todayISO()}.pdf`);
