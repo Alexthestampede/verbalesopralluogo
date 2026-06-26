@@ -1542,15 +1542,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     function checkPageBreak(height = 10) {
-      if (yPos + height > 277) { pdf.addPage(); yPos = 20; return true; }
+      if (yPos + height > 270) { pdf.addPage(); yPos = 20; return true; }
       return false;
     }
     
     function addSeparator() {
+      checkPageBreak(8);
       pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
       pdf.setLineWidth(0.5);
       pdf.line(margin, yPos, pageWidth - margin, yPos);
-      yPos += 5;
+      yPos += 6;
     }
     
     function addText(text, size = 10, style = 'normal', color = colors.text) {
@@ -1558,15 +1559,13 @@ document.addEventListener('DOMContentLoaded', () => {
       pdf.setFontSize(size);
       pdf.setFont('helvetica', style);
       pdf.setTextColor(color[0], color[1], color[2]);
-      const lineHeight = size * 0.45;
+      const lineHeight = size * 0.5;
       const lines = pdf.splitTextToSize(String(text).replace(/\r\n/g, '\n'), contentWidth);
       const blockHeight = lines.length * lineHeight + 2;
-      if (checkPageBreak(blockHeight)) {
-        // If we page-breaked, recalc lines in case contentWidth changes per page
-        pdf.setFontSize(size);
-        pdf.setFont('helvetica', style);
-        pdf.setTextColor(color[0], color[1], color[2]);
-      }
+      checkPageBreak(blockHeight);
+      pdf.setFontSize(size);
+      pdf.setFont('helvetica', style);
+      pdf.setTextColor(color[0], color[1], color[2]);
       pdf.text(lines, margin, yPos);
       yPos += blockHeight;
     }
@@ -1580,20 +1579,20 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if(sameLine) {
         const labelWidth = pdf.getTextWidth(label + ':');
-        const valueLines = pdf.splitTextToSize(valueText, contentWidth - labelWidth - 3);
-        const blockHeight = Math.max(valueLines.length * 3.8, 5);
-        checkPageBreak(blockHeight);
+        const valueLines = pdf.splitTextToSize(valueText, contentWidth - labelWidth - 4);
+        const blockHeight = Math.max(valueLines.length * 4.2, 5);
+        checkPageBreak(blockHeight + 2);
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'bold');
         pdf.setTextColor(colors.secondary[0], colors.secondary[1], colors.secondary[2]);
         pdf.text(label + ':', margin, yPos);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
-        pdf.text(valueLines, margin + labelWidth + 2, yPos);
+        pdf.text(valueLines, margin + labelWidth + 3, yPos);
         yPos += blockHeight + 2;
       } else {
         const lines = pdf.splitTextToSize(valueText, contentWidth - 5);
-        const blockHeight = 4 + lines.length * 3.8 + 3;
+        const blockHeight = 4 + lines.length * 4.2 + 3;
         checkPageBreak(blockHeight);
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'bold');
@@ -1603,7 +1602,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
         pdf.text(lines, margin + 5, yPos);
-        yPos += lines.length * 3.8 + 3;
+        yPos += lines.length * 4.2 + 3;
       }
     }
     
@@ -1611,15 +1610,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const text = String(content).replace(/\r\n/g, ' | ');
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
-      const lines = pdf.splitTextToSize(text, contentWidth - 8);
-      const h = lines.length * 4 + 6;
+      const lines = pdf.splitTextToSize(text, contentWidth - 10);
+      const h = lines.length * 4.2 + 8;
       checkPageBreak(h);
       pdf.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
       pdf.roundedRect(margin, yPos - 2, contentWidth, h, 2, 2, 'F');
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
-      pdf.text(lines, margin + 4, yPos + 3);
+      pdf.text(lines, margin + 5, yPos + 4);
       yPos += h + 4;
     }
     
@@ -1628,20 +1627,21 @@ document.addEventListener('DOMContentLoaded', () => {
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'bold');
       const textWidth = pdf.getTextWidth(displayText);
-      const boxW = 10 + 6 + textWidth + 4;
+      const numberWidth = number ? pdf.getTextWidth(number) + 6 : 0;
+      const boxW = Math.max(numberWidth + textWidth + 10, contentWidth * 0.55);
       const boxH = 10;
       checkPageBreak(boxH + 4);
       pdf.setFillColor(colors.primary[0], colors.primary[1], colors.primary[2]);
       pdf.roundedRect(margin, yPos, boxW, boxH, 1.5, 1.5, 'F');
-      pdf.setFontSize(11);
+      pdf.setFontSize(12);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(255, 255, 255);
       if (number) {
-        pdf.text(number, margin + 3, yPos + 6.5);
+        pdf.text(number, margin + 4, yPos + 6.8);
+        pdf.text(displayText, margin + 16, yPos + 6.8);
+      } else {
+        pdf.text(displayText, margin + 4, yPos + 6.8);
       }
-      pdf.setFontSize(12);
-      pdf.setTextColor(255, 255, 255);
-      pdf.text(displayText, margin + 13, yPos + 6.5);
       yPos += boxH + 4;
     }
     
@@ -1687,32 +1687,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Header documento (printer-friendly, testo verde centrato)
-    pdf.setFontSize(24);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
-    const title = 'VERBALE DI SOPRALLUOGO';
-    const titleWidth = pdf.getTextWidth(title);
-    pdf.text(title, (pageWidth - titleWidth) / 2, 20);
+    function drawCentered(text, size, style, color, y) {
+      pdf.setFontSize(size);
+      pdf.setFont('helvetica', style);
+      pdf.setTextColor(color[0], color[1], color[2]);
+      const textWidth = pdf.getTextWidth(text);
+      pdf.text(text, (pageWidth - textWidth) / 2, y);
+    }
 
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
-    const dlgs = "ai sensi dell'art. 92 D.LGS 81/2008";
-    const dlgsWidth = pdf.getTextWidth(dlgs);
-    pdf.text(dlgs, (pageWidth - dlgsWidth) / 2, 28);
+    drawCentered('VERBALE DI SOPRALLUOGO', 24, 'bold', colors.primary, 20);
+    drawCentered("ai sensi dell'art. 92 D.LGS 81/2008", 14, 'bold', colors.primary, 29);
 
-    pdf.setFontSize(11);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
-    const sub = `${state.progetto || 'Progetto'} - ${state.dataVerbale || 'N/D'}`;
-    const subWidth = pdf.getTextWidth(sub);
-    pdf.text(sub, (pageWidth - subWidth) / 2, 35);
+    const subText = `${state.progetto || 'Progetto'} - ${state.dataVerbale || 'N/D'}`;
+    drawCentered(subText, 11, 'normal', colors.textLight, 38);
 
     pdf.setDrawColor(colors.primary[0], colors.primary[1], colors.primary[2]);
     pdf.setLineWidth(1);
-    pdf.line(margin, 42, pageWidth - margin, 42);
+    pdf.line(margin, 45, pageWidth - margin, 45);
 
-    yPos = 55;
+    yPos = 58;
     addInfoBox(`Generato: ${new Date().toLocaleDateString('it-IT')} | Autore: ${state.autore || 'N/D'} | Numero Verbale: ${state.progettoShort || 'N/D'}`, [240, 249, 255]);
     yPos += 2;
     
@@ -2057,19 +2050,20 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
     
-    // Footer
+        // Footer
     const pageCount = pdf.internal.getNumberOfPages();
     for(let i = 1; i <= pageCount; i++) {
       pdf.setPage(i);
       pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
       pdf.setLineWidth(0.5);
-      pdf.line(margin, 285, pageWidth - margin, 285);
+      pdf.line(margin, 282, pageWidth - margin, 282);
       pdf.setFontSize(8);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
-      pdf.text(`${state.progetto || 'Verbale di sopralluogo'}`, margin, 290);
-      pdf.text(`Pag. ${i} di ${pageCount}`, pageWidth / 2 - 10, 290);
-      pdf.text(`${new Date().toLocaleDateString('it-IT')}`, pageWidth - margin - 20, 290);
+      const footerProject = pdf.splitTextToSize(state.progetto || 'Verbale di sopralluogo', contentWidth - 50)[0];
+      pdf.text(footerProject, margin, 287);
+      pdf.text(`Pag. ${i} di ${pageCount}`, pageWidth / 2 - 10, 287);
+      pdf.text(`${new Date().toLocaleDateString('it-IT')}`, pageWidth - margin - 20, 287);
     }
     
     pdf.save(`Verbale_${(state.progettoShort||'Progetto').replaceAll(' ','-')}_${state.dataVerbale||todayISO()}.pdf`);
