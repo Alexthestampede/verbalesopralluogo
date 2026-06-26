@@ -1546,6 +1546,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return false;
     }
     
+    function checkHeaderPageBreak(height, minY) {
+      if (minY + height > 270) { pdf.addPage(); return true; }
+      return false;
+    }
+    
     function addSeparator() {
       checkPageBreak(8);
       pdf.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
@@ -1559,9 +1564,9 @@ document.addEventListener('DOMContentLoaded', () => {
       pdf.setFontSize(size);
       pdf.setFont('helvetica', style);
       pdf.setTextColor(color[0], color[1], color[2]);
-      const lineHeight = size * 0.5;
+      const lineHeight = size * 0.55;
       const lines = pdf.splitTextToSize(String(text).replace(/\r\n/g, '\n'), contentWidth);
-      const blockHeight = lines.length * lineHeight + 2;
+      const blockHeight = lines.length * lineHeight + 3;
       checkPageBreak(blockHeight);
       pdf.setFontSize(size);
       pdf.setFont('helvetica', style);
@@ -1579,8 +1584,8 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if(sameLine) {
         const labelWidth = pdf.getTextWidth(label + ':');
-        const valueLines = pdf.splitTextToSize(valueText, contentWidth - labelWidth - 4);
-        const blockHeight = Math.max(valueLines.length * 4.2, 5);
+        const valueLines = pdf.splitTextToSize(valueText, contentWidth - labelWidth - 5);
+        const blockHeight = Math.max(valueLines.length * 5.2, 5);
         checkPageBreak(blockHeight + 2);
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'bold');
@@ -1588,21 +1593,23 @@ document.addEventListener('DOMContentLoaded', () => {
         pdf.text(label + ':', margin, yPos);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
-        pdf.text(valueLines, margin + labelWidth + 3, yPos);
+        pdf.text(valueLines, margin + labelWidth + 4, yPos);
         yPos += blockHeight + 2;
       } else {
         const lines = pdf.splitTextToSize(valueText, contentWidth - 5);
-        const blockHeight = 4 + lines.length * 4.2 + 3;
+        const labelH = 5;
+        const valueH = lines.length * 5.0 + 3;
+        const blockHeight = labelH + valueH;
         checkPageBreak(blockHeight);
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'bold');
         pdf.setTextColor(colors.secondary[0], colors.secondary[1], colors.secondary[2]);
         pdf.text(label, margin, yPos);
-        yPos += 4;
+        yPos += labelH;
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
         pdf.text(lines, margin + 5, yPos);
-        yPos += lines.length * 4.2 + 3;
+        yPos += valueH;
       }
     }
     
@@ -1610,39 +1617,42 @@ document.addEventListener('DOMContentLoaded', () => {
       const text = String(content).replace(/\r\n/g, ' | ');
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
-      const lines = pdf.splitTextToSize(text, contentWidth - 10);
-      const h = lines.length * 4.2 + 8;
-      checkPageBreak(h);
+      const lines = pdf.splitTextToSize(text, contentWidth - 14);
+      const lineH = 4.6;
+      const h = lines.length * lineH + 10;
+      checkPageBreak(h + 2);
       pdf.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-      pdf.roundedRect(margin, yPos - 2, contentWidth, h, 2, 2, 'F');
+      pdf.roundedRect(margin, yPos, contentWidth, h, 2, 2, 'F');
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
-      pdf.text(lines, margin + 5, yPos + 4);
-      yPos += h + 4;
+      pdf.text(lines, margin + 7, yPos + 6);
+      yPos += h + 5;
     }
     
     function addSectionHeader(number, text) {
       const displayText = text.toUpperCase();
+      const padding = 6;
+      const hPadding = 8;
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'bold');
       const textWidth = pdf.getTextWidth(displayText);
-      const numberWidth = number ? pdf.getTextWidth(number) + 6 : 0;
-      const boxW = Math.max(numberWidth + textWidth + 10, contentWidth * 0.55);
-      const boxH = 10;
-      checkPageBreak(boxH + 4);
+      const numberWidth = number ? pdf.getTextWidth(number) + hPadding : 0;
+      const boxW = Math.min(Math.max(numberWidth + textWidth + hPadding * 2, contentWidth * 0.55), contentWidth);
+      const boxH = 11;
+      checkPageBreak(boxH + 5);
       pdf.setFillColor(colors.primary[0], colors.primary[1], colors.primary[2]);
       pdf.roundedRect(margin, yPos, boxW, boxH, 1.5, 1.5, 'F');
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(255, 255, 255);
       if (number) {
-        pdf.text(number, margin + 4, yPos + 6.8);
-        pdf.text(displayText, margin + 16, yPos + 6.8);
+        pdf.text(number, margin + hPadding / 2, yPos + 7.5);
+        pdf.text(displayText, margin + hPadding / 2 + 12, yPos + 7.5);
       } else {
-        pdf.text(displayText, margin + 4, yPos + 6.8);
+        pdf.text(displayText, margin + hPadding / 2, yPos + 7.5);
       }
-      yPos += boxH + 4;
+      yPos += boxH + 5;
     }
     
     // Helper per aggiungere immagini mantenendo proporzioni
@@ -1699,7 +1709,13 @@ document.addEventListener('DOMContentLoaded', () => {
     drawCentered("ai sensi dell'art. 92 D.LGS 81/2008", 14, 'bold', colors.primary, 29);
 
     const subText = `${state.progetto || 'Progetto'} - ${state.dataVerbale || 'N/D'}`;
-    drawCentered(subText, 11, 'normal', colors.textLight, 38);
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
+    const subLines = pdf.splitTextToSize(subText, contentWidth);
+    const subBlockH = subLines.length * 5.5 + 2;
+    checkHeaderPageBreak(subBlockH + 2, 45);
+    pdf.text(subLines, margin, 38);
 
     pdf.setDrawColor(colors.primary[0], colors.primary[1], colors.primary[2]);
     pdf.setLineWidth(1);
